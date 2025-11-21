@@ -8,11 +8,13 @@ const app = express();
 
 const cors = require('cors');
 
-const logRequest = require('./logger.js');
+const logRequest = require('./middleware/logger.js');
 
-const validateTodo = require('./validator.js');
+const validateTodo = require('./middleware/validator.js');
 
-const errorHandler = require('./errorHandler.js')
+const validatePatch = require('./middleware/validatePatch.js');
+
+const errorHandler = require('./middleware/errorHandler.js');
 
 app.use(express.json());
 
@@ -79,7 +81,7 @@ app.post('/todos', validateTodo, (req,res, next) => {
     } 
 });
 
-app.patch('/todos/:id', (req,res, next) =>{
+app.patch('/todos/:id', validatePatch, (req,res, next) =>{
     try {
             const id = parseInt(req.params.id)
     const todo = todos.find(t => t.id ===parseInt(req.params.id));
