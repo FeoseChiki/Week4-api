@@ -30,7 +30,10 @@ app.listen(PORT, () =>{
 });
 
 app.get('/todos', async (req, res, next) => {
-    const todos = await Todo.find({});
+    const query = req.query.completed;
+
+    const todos = await Todo.find({completed: query});
+    
     res.status(200).json(todos);
 });
 
@@ -56,22 +59,6 @@ try {
 } catch (error) {
     next (error);
 }
-});
-
-app.get('/todos', async (req, res, next) => {
-    try {
-        const query = {...req.query};
-
-        if (query.completed) {
-            query.completed = query.completed === "false";
-        }
-
-        const todos = await Todo.find(query);
-        res.json(todos);
-
-    } catch (error) {
-        res.status(500).json({error: error.message});
-    }
 });
 
 app.post('/todos', validateTodo, async (req, res, next) => {
