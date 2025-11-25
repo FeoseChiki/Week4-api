@@ -58,9 +58,20 @@ try {
 }
 });
 
-app.get('/todo/active', (req, res, next) => {
-    const activeTodos = todos.filter((t) => t.completed === false);
-    res.status(200).json(activeTodos);
+app.get('/todos', async (req, res, next) => {
+    try {
+        const query = {...req.query};
+
+        if (query.completed) {
+            query.completed = query.completed === "false";
+        }
+
+        const todos = await Todo.find(query);
+        res.json(todos);
+
+    } catch (error) {
+        res.status(500).json({error: error.message});
+    }
 });
 
 app.post('/todos', validateTodo, async (req, res, next) => {
